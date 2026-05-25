@@ -80,7 +80,6 @@
         <div class="log-actions">
           <button onclick="fetchLogs('combind','combind-logs')">&#x1F503; Refresh</button>
           <button onclick="copyLogs('combind')" id="copybtn-combind">&#x1F4CB; Copy</button>
-          <button onclick="clearLogPanel('combind')">&#x2716; Clear</button>
         </div>
         <div class="log-stream" id="logstream-combind">Click Refresh or expand to load logs...</div>
       </div>
@@ -112,7 +111,6 @@
         <div class="log-actions">
           <button onclick="fetchLogs('anime','anime-logs')">&#x1F503; Refresh</button>
           <button onclick="copyLogs('anime')" id="copybtn-anime">&#x1F4CB; Copy</button>
-          <button onclick="clearLogPanel('anime')">&#x2716; Clear</button>
         </div>
         <div class="log-stream" id="logstream-anime">Click Refresh or expand to load logs...</div>
       </div>
@@ -190,27 +188,27 @@ function copyLogs(prefix) {
   var el = document.getElementById('logstream-' + prefix);
   var text = el ? el.textContent : '';
   if (!text.trim()) { return; }
-  navigator.clipboard.writeText(text).then(function() {
-    var btn = document.getElementById('copybtn-' + prefix);
-    var orig = btn.innerHTML;
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  var btn = document.getElementById('copybtn-' + prefix);
+  var orig = btn.innerHTML;
+  if (ok) {
     btn.innerHTML = '&#x2705; Copied!';
     btn.style.color = '#56d364';
-    setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  }).catch(function() {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    var btn = document.getElementById('copybtn-' + prefix);
-    var orig = btn.innerHTML;
-    btn.innerHTML = '&#x2705; Copied!';
-    btn.style.color = '#56d364';
-    setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  });
+  } else {
+    btn.innerHTML = '&#x26A0; Failed';
+    btn.style.color = '#f85149';
+  }
+  setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
 }
 </script>
 </body>
