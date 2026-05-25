@@ -3,8 +3,6 @@ services:
     image: almir/webhook
     container_name: ops-webhook
     restart: unless-stopped
-    ports:
-      - "9001:9000"
     volumes:
       - ./hooks.json:/etc/webhook/hooks.json:ro
       - ./scripts:/scripts
@@ -23,3 +21,6 @@ services:
       - "9000:80"
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - webhook

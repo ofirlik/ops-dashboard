@@ -5,70 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ops Dashboard</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0f1117; color: #e2e8f0; font-family: Segoe UI, system-ui, sans-serif; min-height: 100vh; padding: 2rem; }
-h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; color: #fff; }
-.subtitle { color: #64748b; margin-bottom: 0.75rem; font-size: 0.95rem; }
-.note { background: #1e2130; border: 1px solid #3b4263; border-left: 4px solid #6366f1; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 2rem; font-size: 0.85rem; color: #94a3b8; }
-.note strong { color: #a5b4fc; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
-.card { background: #1e2130; border: 1px solid #2d3148; border-radius: 14px; padding: 1.5rem; }
-.card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
-.card-icon { font-size: 1.6rem; }
-.card-title { font-size: 1.1rem; font-weight: 600; color: #fff; }
-.card-desc { font-size: 0.8rem; color: #64748b; margin-top: 0.15rem; }
-.btn-group { display: flex; flex-direction: column; gap: 0.6rem; }
-.btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; width: 100%; color: #ffffff; }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn-update { background: #2563eb; }
-.btn-update:not(:disabled):hover { background: #3b82f6; }
-.btn-restart { background: #059669; }
-.btn-restart:not(:disabled):hover { background: #10b981; }
-.log-box { margin-top: 1rem; background: #0a0d14; border: 1px solid #2d3148; border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.78rem; color: #94a3b8; max-height: 120px; overflow-y: auto; display: none; white-space: pre-wrap; }
-.log-box.show { display: block; }
-.toast { position: fixed; bottom: 1.5rem; right: 1.5rem; border-radius: 10px; padding: 0.9rem 1.3rem; font-size: 0.9rem; font-weight: 500; display: none; align-items: center; gap: 0.6rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 999; }
-.toast.show { display: flex; }
-.toast.running { background: #1e2130; border: 1px solid #3b4263; color: #e2e8f0; }
-.toast.ok { background: #064e3b; border: 1px solid #059669; color: #6ee7b7; }
-.toast.err { background: #450a0a; border: 1px solid #dc2626; color: #fca5a5; }
-.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f1117;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:2rem}
+h1{font-size:1.8rem;font-weight:700;margin-bottom:.3rem;color:#fff}
+.subtitle{color:#64748b;margin-bottom:.75rem;font-size:.95rem}
+.note{background:#1e2130;border:1px solid #3b4263;border-left:4px solid #6366f1;border-radius:8px;padding:.75rem 1rem;margin-bottom:2rem;font-size:.85rem;color:#94a3b8;line-height:1.6}
+.note strong{color:#a5b4fc}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem}
+.card{background:#1e2130;border:1px solid #2d3148;border-radius:14px;padding:1.5rem}
+.card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.card-icon{font-size:1.8rem;line-height:1}
+.card-title{font-size:1.1rem;font-weight:600;color:#fff}
+.card-desc{font-size:.8rem;color:#64748b;margin-top:.15rem}
+.btn-group{display:flex;flex-direction:column;gap:.6rem}
+.btn{display:flex;align-items:center;justify-content:center;gap:.6rem;padding:.75rem 1rem;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;width:100%;color:#fff;transition:opacity .15s,transform .1s}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-update{background:#2563eb}
+.btn-update:hover:not(:disabled){background:#3b82f6}
+.btn-restart{background:#059669}
+.btn-restart:hover:not(:disabled){background:#10b981}
+.status-bar{margin-top:1rem;border-radius:8px;overflow:hidden;display:none}
+.status-bar.show{display:block}
+.status-header{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;font-size:.8rem;font-weight:600}
+.status-header.running{background:#1e3a5f;color:#93c5fd}
+.status-header.ok{background:#064e3b;color:#6ee7b7}
+.status-header.err{background:#450a0a;color:#fca5a5}
+.status-log{background:#0a0d14;padding:.75rem;font-family:monospace;font-size:.78rem;color:#94a3b8;max-height:140px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border-top:1px solid #2d3148}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 </style>
 </head>
 <body>
-<h1>Ops Dashboard</h1>
-<p class="subtitle">Server control panel - click to run actions</p>
+<h1>&#x1F5A5;&#xFE0F; Ops Dashboard</h1>
+<p class="subtitle">Server control panel</p>
 <div class="note">
-<strong>Port 9000</strong> = this dashboard (what you are looking at now)<br>
-<strong>Port 9001</strong> = internal webhook listener - runs the scripts when you click a button. You never need to open 9001 directly, the dashboard talks to it automatically behind the scenes.
+  <strong>Port 9000</strong> = this dashboard (what you are looking at)<br>
+  <strong>Port 9001</strong> = internal webhook engine that runs the scripts behind the scenes &mdash; you never need to open it, the buttons here talk to it automatically through nginx.
 </div>
 <div class="grid">
-<div class="card">
-<div class="card-header"><span class="card-icon">&#x1F4AC;</span><div><div class="card-title">Combind Chat</div><div class="card-desc">Port 3002 - /opt/combind-chat</div></div></div>
-<div class="btn-group">
-<button class="btn btn-update" onclick="runHook(&#39;combind-update&#39;,this,&#39;combind-log&#39;)">&#x2B07;&#xFE0F; Pull &amp; Rebuild</button>
-<button class="btn btn-restart" onclick="runHook(&#39;combind-restart&#39;,this,&#39;combind-log&#39;)">&#x1F501; Restart Container</button>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">&#x1F4AC;</span>
+      <div>
+        <div class="card-title">Combind Chat</div>
+        <div class="card-desc">Port 3002 &mdash; /opt/combind-chat</div>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-update" id="btn-combind-update" onclick="run('combind-update','combind')">
+        &#x2B07;&#xFE0F; Pull &amp; Rebuild
+      </button>
+      <button class="btn btn-restart" id="btn-combind-restart" onclick="run('combind-restart','combind')">
+        &#x1F501; Restart Container
+      </button>
+    </div>
+    <div class="status-bar" id="status-combind">
+      <div class="status-header" id="status-combind-header"></div>
+      <div class="status-log" id="status-combind-log"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-icon">&#x1F3CC;&#xFE0F;</span>
+      <div>
+        <div class="card-title">Anime Downloader</div>
+        <div class="card-desc">Port 8001 &mdash; /opt/anime-downloader</div>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-update" id="btn-anime-update" onclick="run('anime-update','anime')">
+        &#x2B07;&#xFE0F; Pull &amp; Rebuild
+      </button>
+      <button class="btn btn-restart" id="btn-anime-restart" onclick="run('anime-restart','anime')">
+        &#x1F501; Restart Container
+      </button>
+    </div>
+    <div class="status-bar" id="status-anime">
+      <div class="status-header" id="status-anime-header"></div>
+      <div class="status-log" id="status-anime-log"></div>
+    </div>
+  </div>
+
 </div>
-<div class="log-box" id="combind-log"></div>
-</div>
-<div class="card">
-<div class="card-header"><span class="card-icon">&#x1F3CC;</span><div><div class="card-title">Anime Downloader</div><div class="card-desc">Port 8001 - /opt/anime-downloader</div></div></div>
-<div class="btn-group">
-<button class="btn btn-update" onclick="runHook(&#39;anime-update&#39;,this,&#39;anime-log&#39;)">&#x2B07;&#xFE0F; Pull &amp; Rebuild</button>
-<button class="btn btn-restart" onclick="runHook(&#39;anime-restart&#39;,this,&#39;anime-log&#39;)">&#x1F501; Restart Container</button>
-</div>
-<div class="log-box" id="anime-log"></div>
-</div>
-</div>
-<div class="toast" id="toast"></div>
 <script>
-async function runHook(hookId,btn,logId){
-const card=btn.closest(".card");const allBtns=card.querySelectorAll(".btn");const log=document.getElementById(logId);const origText=btn.textContent;
-allBtns.forEach(b=>b.disabled=true);btn.innerHTML="<span class="spinner"></span> Running...";log.classList.add("show");log.textContent="> "+hookId+"
-";showToast("Running...","running");
-try{const res=await fetch("http://"+location.hostname+":9001/hooks/"+hookId,{method:"POST"});const text=await res.text();log.textContent+=text+"
-> Done!";log.scrollTop=log.scrollHeight;showToast("Done!","ok");}catch(e){log.textContent+="> Error: "+e.message;showToast("Failed","err");}
-btn.textContent=origText;allBtns.forEach(b=>b.disabled=false);}
-function showToast(msg,type){const t=document.getElementById("toast");t.textContent=msg;t.className="toast show "+type;clearTimeout(t._t);t._t=setTimeout(()=>t.className="toast",4000);}
+function run(hookId, card) {
+  var btns = [
+    document.getElementById('btn-' + card + '-update'),
+    document.getElementById('btn-' + card + '-restart')
+  ];
+  var bar = document.getElementById('status-' + card);
+  var header = document.getElementById('status-' + card + '-header');
+  var log = document.getElementById('status-' + card + '-log');
+
+  btns.forEach(function(b){ b.disabled = true; });
+  bar.className = 'status-bar show';
+  header.className = 'status-header running';
+  header.innerHTML = '<span class="spinner"></span> <span class="pulse">Running ' + hookId + '...</span>';
+  log.textContent = '> ' + hookId + '\n> Waiting for server...';
+
+  fetch('/hooks/' + hookId, { method: 'POST' })
+    .then(function(res) {
+      return res.text().then(function(text) {
+        return { ok: res.ok, text: text };
+      });
+    })
+    .then(function(result) {
+      header.className = 'status-header ok';
+      header.innerHTML = '&#x2705; Done!';
+      log.textContent = result.text || '(no output)';
+      log.scrollTop = log.scrollHeight;
+    })
+    .catch(function(err) {
+      header.className = 'status-header err';
+      header.innerHTML = '&#x274C; Error';
+      log.textContent = 'Failed: ' + err.message + '\n\nMake sure port 9001 is running.';
+    })
+    .finally(function() {
+      btns.forEach(function(b){ b.disabled = false; });
+    });
+}
 </script>
-</body></html>
+</body>
+</html>
