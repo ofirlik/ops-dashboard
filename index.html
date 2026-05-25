@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ops Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f1117; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 2rem; }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; color: #fff; }
+  .subtitle { color: #64748b; margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+  .card { background: #1e2130; border: 1px solid #2d3148; border-radius: 14px; padding: 1.5rem; }
+  .card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+  .card-icon { font-size: 1.6rem; }
+  .card-title { font-size: 1.1rem; font-weight: 600; color: #fff; }
+  .card-desc { font-size: 0.8rem; color: #64748b; margin-top: 0.1rem; }
+  .btn-group { display: flex; flex-direction: column; gap: 0.6rem; }
+  .btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.15s; width: 100%; text-align: left; }
+  .btn:active { transform: scale(0.97); }
+  .btn-update { background: #1d4ed8; color: #fff; }
+  .btn-update:hover { background: #2563eb; }
+  .btn-restart { background: #065f46; color: #fff; }
+  .btn-restart:hover { background: #047857; }
+  .btn span.icon { font-size: 1rem; }
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; padding: 0.9rem 1.3rem; font-size: 0.9rem; display: none; align-items: center; gap: 0.6rem; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 999; }
+  .toast.show { display: flex; }
+  .toast.ok { border-color: #047857; color: #6ee7b7; }
+  .toast.err { border-color: #dc2626; color: #fca5a5; }
+  .spinner { width: 16px; height: 16px; border: 2px solid #ffffff33; border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .log-box { margin-top: 1rem; background: #0f1117; border: 1px solid #2d3148; border-radius: 8px; padding: 0.75rem; font-family: monospace; font-size: 0.78rem; color: #94a3b8; max-height: 120px; overflow-y: auto; display: none; white-space: pre-wrap; }
+  .log-box.show { display: block; }
+</style>
+</head>
+<body>
+<p class="subtitle">Server panel control click to run actions</p> <h1>
+<div class="grid">
+
+  <div class="card">
+    <div class="card-header">
+      <div>      <span class="card-icon">
+        <div class="card-title">Combind Chat</div>
+        <div class="card-desc">Port        /opt/combind-chat</div>3002 
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-update" onclick="runHook('combind-update', this, 'combind-log')">
+        <span class="</span> Pull & Rebuildicon">
+      </button>
+      <button class="btn btn-restart" onclick="runHook('combind-restart', this, 'combind-log')">
+      </button>        <span class="icon">
+    </div>
+    <div class="log-box" id="combind-log"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>      <span class="card-icon">
+        <div class="card-title">Anime Downloader</div>
+        <div class="card-desc">Port        /opt/anime-downloader</div>8001 
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-update" onclick="runHook('anime-update', this, 'anime-log')">
+        <span class="</span> Pull & Rebuildicon">
+      </button>
+      <button class="btn btn-restart" onclick="runHook('anime-restart', this, 'anime-log')">
+      </button>        <span class="icon">
+    </div>
+    <div class="log-box" id="anime-log"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+async function runHook(hookId, btn, logId) {
+  const log = document.getElementById(logId);
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Running...';
+  log.classList.add('show');
+  log.textContent = 'Starting ' + hookId + '...\n';
+     Running ' + hookId + '...', '');showToast('
+  try {
+    const res = await fetch('http://' + location.hostname + ':9001/hooks/' + hookId, { method: 'POST' });
+    const text = await res.text();
+    log.textContent += text + \ Done!';
+    log.scrollTop = log.scrollHeight;
+    showToast('✅ ' + hookId + ' completed!', 'ok');
+  } catch(e) {
+    log. Error: ' + e.message;textContent += '
+     ' + hookId + ' failed', 'err');showToast('
+  }
+  btn.innerHTML = origHTML;
+  btn.disabled = false;
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 4000);
+}
+</script>
+</body>
+</html>

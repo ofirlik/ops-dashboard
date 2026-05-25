@@ -1,0 +1,26 @@
+[
+  {
+    "id": "combind-update",
+    "execute-command": "/scripts/combind-update.sh",
+    "command-working-directory": "/opt/combind-chat",
+    "response-message": "Running combind update..."
+  },
+  {
+    "id": "combind-restart",
+    "execute-command": "/scripts/combind-restart.sh",
+    "command-working-directory": "/opt/combind-chat",
+    "response-message": "Restarting combind..."
+  },
+  {
+    "id": "anime-update",
+    "execute-command": "/scripts/anime-update.sh",
+    "command-working-directory": "/opt/anime-downloader",
+    "response-message": "Running anime-downloader update..."
+  },
+  {
+    "id": "anime-restart",
+    "execute-command": "/scripts/anime-restart.sh",
+    "command-working-directory": "/opt/anime-downloader",
+    "response-message": "Restarting anime-downloader..."
+  }
+]

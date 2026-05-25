@@ -1,0 +1,25 @@
+services:
+  webhook:
+    image: almir/webhook
+    container_name: ops-webhook
+    restart: unless-stopped
+    ports:
+      - "9001:9000"
+    volumes:
+      - ./hooks.json:/etc/webhook/hooks.json:ro
+      - ./scripts:/scripts
+      - /opt/combind-chat:/opt/combind-chat
+      - /opt/anime-downloader:/opt/anime-downloader
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.ssh:/root/.ssh:ro
+      - /root/.gitconfig:/root/.gitconfig:ro
+    command: ["-verbose", "-hooks=/etc/webhook/hooks.json", "-hotreload"]
+
+  dashboard:
+    image: nginx:alpine
+    container_name: ops-dashboard
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
