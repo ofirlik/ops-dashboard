@@ -133,26 +133,33 @@ function showLog(prefix, text) {
   el.style.display = text ? 'block' : 'none';
   el.textContent = text;
 }
-function runHook(hookId, prefix) {
+async function runHook(hookId, prefix) {
   var btns = allBtns(prefix);
   btns.forEach(function(b){ b.disabled = true; });
   setStatus(prefix, 'status-running', '<span class="spinner"></span> Running ' + hookId + '...');
   showLog(prefix, '');
-  fetch('/logs/' + hookId)
-    .then(function(r){ return r.text(); })
-    .then(function(t){
-      setStatus(prefix, 'status-done', '&#x2705; Done!');
-      showLog(prefix, t.trim());
-      if (document.getElementById('logbody-' + prefix).classList.contains('open')) {
-        fetchLogs(prefix, prefix + '-logs');
+  try {
+    var startRes = await fetch('/hooks/' + hookId);
+    var startData = await startRes.json();
+    var jobId = startData.job_id;
+    while (true) {
+      await new Promise(function(r){ setTimeout(r, 2000); });
+      var pollRes = await fetch('/hooks/job/' + jobId);
+      var job = await pollRes.json();
+      showLog(prefix, job.output || '');
+      if (job.status === 'done') {
+        setStatus(prefix, 'status-done', '&#x2705; Done!');
+        break;
+      } else if (job.status === 'error') {
+        setStatus(prefix, 'status-error', '&#x274C; Error (check log)');
+        break;
       }
-    })
-    .catch(function(e){
-      setStatus(prefix, 'status-error', '&#x274C; Error: ' + e.message);
-    })
-    .finally(function(){
-      btns.forEach(function(b){ b.disabled = false; });
-    });
+    }
+  } catch(e) {
+    setStatus(prefix, 'status-error', '&#x274C; Error: ' + e.message);
+  } finally {
+    btns.forEach(function(b){ b.disabled = false; });
+  }
 }
 function toggleLogs(prefix, hookId) {
   var toggle = document.getElementById('logtoggle-' + prefix);
