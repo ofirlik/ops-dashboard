@@ -1,0 +1,3 @@
+FROM docker:alpine AS base
+COPY --from=almir/webhook /usr/local/bin/webhook /usr/local/bin/webhook
+ENTRYPOINT ["/usr/local/bin/webhook"]

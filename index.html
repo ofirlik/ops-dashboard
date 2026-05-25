@@ -5,41 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ops Dashboard</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0f1117;color:#e2e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding:2rem}
-h1{font-size:1.8rem;font-weight:700;margin-bottom:.3rem;color:#fff}
-.subtitle{color:#64748b;margin-bottom:.75rem;font-size:.95rem}
-.note{background:#1e2130;border:1px solid #3b4263;border-left:4px solid #6366f1;border-radius:8px;padding:.75rem 1rem;margin-bottom:2rem;font-size:.85rem;color:#94a3b8;line-height:1.6}
-.note strong{color:#a5b4fc}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem}
-.card{background:#1e2130;border:1px solid #2d3148;border-radius:14px;padding:1.5rem}
-.card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
-.card-icon{font-size:1.8rem;line-height:1}
-.card-title{font-size:1.1rem;font-weight:600;color:#fff}
-.card-desc{font-size:.8rem;color:#64748b;margin-top:.15rem}
-.btn-group{display:flex;flex-direction:column;gap:.6rem}
-.btn{display:flex;align-items:center;justify-content:center;gap:.6rem;padding:.75rem 1rem;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;width:100%;color:#fff;transition:opacity .15s,transform .1s}
-.btn:active:not(:disabled){transform:scale(.97)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-update{background:#2563eb}
-.btn-update:hover:not(:disabled){background:#3b82f6}
-.btn-restart{background:#059669}
-.btn-restart:hover:not(:disabled){background:#10b981}
-.status-bar{margin-top:1rem;border-radius:8px;overflow:hidden;display:none}
-.status-bar.show{display:block}
-.status-header{display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;font-size:.8rem;font-weight:600}
-.status-header.running{background:#1e3a5f;color:#93c5fd}
-.status-header.ok{background:#064e3b;color:#6ee7b7}
-.status-header.err{background:#450a0a;color:#fca5a5}
-.status-log{background:#0a0d14;padding:.75rem;font-family:monospace;font-size:.78rem;color:#94a3b8;max-height:140px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border-top:1px solid #2d3148}
-.spinner{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
-.pulse{animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Segoe UI', sans-serif; padding: 24px; }
+  h1 { font-size: 1.6rem; display: flex; align-items: center; gap: 10px; }
+  h1 span { font-size: 1.8rem; }
+  .subtitle { color: #8b949e; margin-top: 4px; font-size: 0.9rem; }
+  .note { background: #161b22; border-left: 3px solid #388bfd; padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; color: #8b949e; margin: 18px 0; line-height: 1.6; }
+  .note strong { color: #e6edf3; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-top: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .card-icon { font-size: 1.4rem; }
+  .card-title { font-size: 1.05rem; font-weight: 600; }
+  .card-sub { font-size: 0.78rem; color: #8b949e; margin-top: 2px; }
+  .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-blue { background: #1f6feb; color: #fff; }
+  .btn-blue:hover:not(:disabled) { background: #388bfd; }
+  .btn-green { background: #238636; color: #fff; }
+  .btn-green:hover:not(:disabled) { background: #2ea043; }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-bar { display: none; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+  .status-running { background: #1f4068; color: #79c0ff; display: flex; align-items: center; gap: 8px; }
+  .status-done { background: #1a4731; color: #56d364; }
+  .status-error { background: #4a1a1a; color: #f85149; }
+  .log-out { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.78rem; color: #8b949e; white-space: pre-wrap; display: none; margin-bottom: 8px; max-height: 160px; overflow-y: auto; }
+  .log-panel { margin-top: 4px; }
+  .log-panel-toggle { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #8b949e; font-size: 0.83rem; font-weight: 600; padding: 8px 12px; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }
+  .log-panel-toggle:hover { background: #161b22; color: #e6edf3; }
+  .log-panel-toggle .arrow { transition: transform 0.25s; display: inline-block; }
+  .log-panel-toggle.open .arrow { transform: rotate(90deg); }
+  .log-panel-body { display: none; margin-top: 6px; }
+  .log-panel-body.open { display: block; }
+  .log-stream { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.76rem; color: #8b949e; white-space: pre-wrap; max-height: 260px; overflow-y: auto; line-height: 1.5; }
+  .line-err { color: #f85149; }
+  .line-warn { color: #e3b341; }
+  .log-actions { display: flex; gap: 8px; margin-bottom: 6px; }
+  .log-actions button { flex: 1; padding: 5px 8px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; border: 1px solid #30363d; background: #21262d; color: #8b949e; cursor: pointer; }
+  .log-actions button:hover { background: #30363d; color: #e6edf3; }
 </style>
 </head>
 <body>
-<h1>&#x1F5A5;&#xFE0F; Ops Dashboard</h1>
+<h1><span>&#x1F5A5;&#xFE0F;</span> Ops Dashboard</h1>
 <p class="subtitle">Server control panel</p>
 <div class="note">
   <strong>Port 9000</strong> = this dashboard (what you are looking at)<br>
@@ -47,87 +55,133 @@ h1{font-size:1.8rem;font-weight:700;margin-bottom:.3rem;color:#fff}
 </div>
 <div class="grid">
 
+  <!-- Combind Chat -->
   <div class="card">
     <div class="card-header">
-      <span class="card-icon">&#x1F4AC;</span>
+      <div class="card-icon">&#x1F4AC;</div>
       <div>
         <div class="card-title">Combind Chat</div>
-        <div class="card-desc">Port 3002 &mdash; /opt/combind-chat</div>
+        <div class="card-sub">Port 3002 &mdash; /opt/combind-chat</div>
       </div>
     </div>
-    <div class="btn-group">
-      <button class="btn btn-update" id="btn-combind-update" onclick="run('combind-update','combind')">
-        &#x2B07;&#xFE0F; Pull &amp; Rebuild
+    <button class="btn btn-blue" onclick="runHook('combind-update','combind')" id="btn-combind-update">
+      &#x2B06;&#xFE0F; Pull &amp; Rebuild
+    </button>
+    <button class="btn btn-green" onclick="runHook('combind-restart','combind')" id="btn-combind-restart">
+      &#x1F504; Restart Container
+    </button>
+    <div class="status-bar" id="status-combind"></div>
+    <div class="log-out" id="log-combind"></div>
+    <div class="log-panel">
+      <button class="log-panel-toggle" id="logtoggle-combind" onclick="toggleLogs('combind','combind-logs')">
+        <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
       </button>
-      <button class="btn btn-restart" id="btn-combind-restart" onclick="run('combind-restart','combind')">
-        &#x1F501; Restart Container
-      </button>
-    </div>
-    <div class="status-bar" id="status-combind">
-      <div class="status-header" id="status-combind-header"></div>
-      <div class="status-log" id="status-combind-log"></div>
+      <div class="log-panel-body" id="logbody-combind">
+        <div class="log-actions">
+          <button onclick="fetchLogs('combind','combind-logs')">&#x1F503; Refresh</button>
+          <button onclick="clearLogPanel('combind')">&#x1F5D1;&#xFE0F; Clear</button>
+        </div>
+        <div class="log-stream" id="logstream-combind">Click Refresh or expand to load logs...</div>
+      </div>
     </div>
   </div>
 
+  <!-- Anime Downloader -->
   <div class="card">
     <div class="card-header">
-      <span class="card-icon">&#x1F3CC;&#xFE0F;</span>
+      <div class="card-icon">&#x1F4FA;</div>
       <div>
         <div class="card-title">Anime Downloader</div>
-        <div class="card-desc">Port 8001 &mdash; /opt/anime-downloader</div>
+        <div class="card-sub">Port 8001 &mdash; /opt/anime-downloader</div>
       </div>
     </div>
-    <div class="btn-group">
-      <button class="btn btn-update" id="btn-anime-update" onclick="run('anime-update','anime')">
-        &#x2B07;&#xFE0F; Pull &amp; Rebuild
+    <button class="btn btn-blue" onclick="runHook('anime-update','anime')" id="btn-anime-update">
+      &#x2B06;&#xFE0F; Pull &amp; Rebuild
+    </button>
+    <button class="btn btn-green" onclick="runHook('anime-restart','anime')" id="btn-anime-restart">
+      &#x1F504; Restart Container
+    </button>
+    <div class="status-bar" id="status-anime"></div>
+    <div class="log-out" id="log-anime"></div>
+    <div class="log-panel">
+      <button class="log-panel-toggle" id="logtoggle-anime" onclick="toggleLogs('anime','anime-logs')">
+        <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
       </button>
-      <button class="btn btn-restart" id="btn-anime-restart" onclick="run('anime-restart','anime')">
-        &#x1F501; Restart Container
-      </button>
-    </div>
-    <div class="status-bar" id="status-anime">
-      <div class="status-header" id="status-anime-header"></div>
-      <div class="status-log" id="status-anime-log"></div>
+      <div class="log-panel-body" id="logbody-anime">
+        <div class="log-actions">
+          <button onclick="fetchLogs('anime','anime-logs')">&#x1F503; Refresh</button>
+          <button onclick="clearLogPanel('anime')">&#x1F5D1;&#xFE0F; Clear</button>
+        </div>
+        <div class="log-stream" id="logstream-anime">Click Refresh or expand to load logs...</div>
+      </div>
     </div>
   </div>
 
 </div>
 <script>
-function run(hookId, card) {
-  var btns = [
-    document.getElementById('btn-' + card + '-update'),
-    document.getElementById('btn-' + card + '-restart')
-  ];
-  var bar = document.getElementById('status-' + card);
-  var header = document.getElementById('status-' + card + '-header');
-  var log = document.getElementById('status-' + card + '-log');
-
+function allBtns(prefix) {
+  return document.querySelectorAll('[id^="btn-' + prefix + '"]');
+}
+function setStatus(prefix, cls, html) {
+  var el = document.getElementById('status-' + prefix);
+  el.className = 'status-bar ' + cls;
+  el.style.display = 'block';
+  el.innerHTML = html;
+}
+function showLog(prefix, text) {
+  var el = document.getElementById('log-' + prefix);
+  el.style.display = text ? 'block' : 'none';
+  el.textContent = text;
+}
+function runHook(hookId, prefix) {
+  var btns = allBtns(prefix);
   btns.forEach(function(b){ b.disabled = true; });
-  bar.className = 'status-bar show';
-  header.className = 'status-header running';
-  header.innerHTML = '<span class="spinner"></span> <span class="pulse">Running ' + hookId + '...</span>';
-  log.textContent = '> ' + hookId + '\n> Waiting for server...';
-
-  fetch('/hooks/' + hookId, { method: 'POST' })
-    .then(function(res) {
-      return res.text().then(function(text) {
-        return { ok: res.ok, text: text };
-      });
+  setStatus(prefix, 'status-running', '<span class="spinner"></span> Running ' + hookId + '...');
+  showLog(prefix, '');
+  fetch('/logs/' + hookId)
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      setStatus(prefix, 'status-done', '&#x2705; Done!');
+      showLog(prefix, t.trim());
+      if (document.getElementById('logbody-' + prefix).classList.contains('open')) {
+        fetchLogs(prefix, prefix + '-logs');
+      }
     })
-    .then(function(result) {
-      header.className = 'status-header ok';
-      header.innerHTML = '&#x2705; Done!';
-      log.textContent = result.text || '(no output)';
-      log.scrollTop = log.scrollHeight;
+    .catch(function(e){
+      setStatus(prefix, 'status-error', '&#x274C; Error: ' + e.message);
     })
-    .catch(function(err) {
-      header.className = 'status-header err';
-      header.innerHTML = '&#x274C; Error';
-      log.textContent = 'Failed: ' + err.message + '\n\nMake sure port 9001 is running.';
-    })
-    .finally(function() {
+    .finally(function(){
       btns.forEach(function(b){ b.disabled = false; });
     });
+}
+function toggleLogs(prefix, hookId) {
+  var toggle = document.getElementById('logtoggle-' + prefix);
+  var body = document.getElementById('logbody-' + prefix);
+  var wasOpen = body.classList.contains('open');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+  if (!wasOpen) { fetchLogs(prefix, hookId); }
+}
+function fetchLogs(prefix, hookId) {
+  var el = document.getElementById('logstream-' + prefix);
+  el.textContent = 'Loading...';
+  fetch('/logs/' + hookId)
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      el.innerHTML = '';
+      t.split('\n').forEach(function(line) {
+        var span = document.createElement('span');
+        if (/error|exception|fatal/i.test(line)) span.className = 'line-err';
+        else if (/warn/i.test(line)) span.className = 'line-warn';
+        span.textContent = line + '\n';
+        el.appendChild(span);
+      });
+      el.scrollTop = el.scrollHeight;
+    })
+    .catch(function(e){ el.textContent = 'Error loading logs: ' + e.message; });
+}
+function clearLogPanel(prefix) {
+  document.getElementById('logstream-' + prefix).textContent = 'Cleared. Click Refresh to reload.';
 }
 </script>
 </body>
