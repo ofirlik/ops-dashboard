@@ -8,5 +8,5 @@ services:
     extra_hosts:
       - "host-gateway:host-gateway"
     volumes:
-      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./html:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

@@ -6,10 +6,22 @@ ACTIONS = {
     'combind-restart': ['sh', '/opt/ops-dashboard/scripts/combind-restart.sh'],
     'anime-update':    ['sh', '/opt/ops-dashboard/scripts/anime-update.sh'],
     'anime-restart':   ['sh', '/opt/ops-dashboard/scripts/anime-restart.sh'],
+    'marinara-update':  ['sh', '/opt/ops-dashboard/scripts/marinara-update.sh'],
+    'marinara-restart': ['sh', '/opt/ops-dashboard/scripts/marinara-restart.sh'],
+    'spoolman-update':  ['sh', '/opt/ops-dashboard/scripts/spoolman-update.sh'],
+    'spoolman-restart': ['sh', '/opt/ops-dashboard/scripts/spoolman-restart.sh'],
+    'claude-health':        ['sh', '/opt/ops-dashboard/scripts/claude-health.sh'],
+    'claude-remote-start':  ['sh', '/opt/ops-dashboard/scripts/claude-remote-start.sh'],
+    'claude-remote-stop':   ['sh', '/opt/ops-dashboard/scripts/claude-remote-stop.sh'],
+    'claude-remote-status': ['sh', '/opt/ops-dashboard/scripts/claude-remote-status.sh'],
+    'ttyd-status':   ['sh', '/opt/ops-dashboard/scripts/ttyd-status.sh'],
+    'ttyd-restart':  ['sh', '/opt/ops-dashboard/scripts/ttyd-restart.sh'],
 }
 LOGS = {
-    'combind-logs': 'combind-chat',
-    'anime-logs':   'anime-downloader',
+    'combind-logs':   'combind-chat',
+    'anime-logs':     'anime-downloader',
+    'marinara-logs':  'marinara-engine-marinara-1',
+    'spoolman-logs':  'spoolman-spoolman-1',
 }
 
 # job_id -> {'status': running/done/error, 'output': str}

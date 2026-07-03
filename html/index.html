@@ -17,6 +17,8 @@
   .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
   .card-icon { font-size: 1.4rem; }
   .card-title { font-size: 1.05rem; font-weight: 600; }
+  .card-title a { color: inherit; text-decoration: none; }
+  .card-title a:hover { text-decoration: underline; color: #58a6ff; }
   .card-sub { font-size: 0.78rem; color: #8b949e; margin-top: 2px; }
   .btn { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -41,9 +43,17 @@
   .log-stream { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.76rem; color: #8b949e; white-space: pre-wrap; max-height: 260px; overflow-y: auto; line-height: 1.5; }
   .line-err { color: #f85149; }
   .line-warn { color: #e3b341; }
+  .copy-action-btn { margin-top: 4px; padding: 4px 10px; font-size: 0.76rem; font-weight: 600; border-radius: 6px; border: 1px solid #30363d; background: #21262d; color: #8b949e; cursor: pointer; }
+  .copy-action-btn:hover { background: #30363d; color: #e6edf3; }
   .log-actions { display: flex; gap: 8px; margin-bottom: 6px; }
   .log-actions button { flex: 1; padding: 5px 8px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; border: 1px solid #30363d; background: #21262d; color: #8b949e; cursor: pointer; }
   .log-actions button:hover { background: #30363d; color: #e6edf3; }
+  .btn-red { background: #6e1a1a; color: #f85149; border: 1px solid #5a1919; }
+  .btn-red:hover:not(:disabled) { background: #8a2020; }
+  .btn-gray { background: #21262d; color: #8b949e; border: 1px solid #30363d; }
+  .btn-gray:hover:not(:disabled) { background: #30363d; color: #e6edf3; }
+  .session-badge { background: #1f4068; color: #79c0ff; border-radius: 6px; padding: 6px 10px; font-size: 0.82rem; font-family: monospace; margin-bottom: 8px; display: none; }
+  .session-badge span { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -60,7 +70,7 @@
     <div class="card-header">
       <div class="card-icon">&#x1F4AC;</div>
       <div>
-        <div class="card-title">Combind Chat</div>
+        <div class="card-title"><a href="#" onclick="window.open('http://'+location.hostname+':3002');return false;" target="_blank">Combind Chat &#x2197;</a></div>
         <div class="card-sub">Port 3002 &mdash; /opt/combind-chat</div>
       </div>
     </div>
@@ -72,6 +82,7 @@
     </button>
     <div class="status-bar" id="status-combind"></div>
     <div class="log-out" id="log-combind"></div>
+    <button class="copy-action-btn" id="copyaction-combind" onclick="copyActionLog('combind')" style="display:none">&#x1F4CB; Copy Output</button>
     <div class="log-panel">
       <button class="log-panel-toggle" id="logtoggle-combind" onclick="toggleLogs('combind','combind-logs')">
         <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
@@ -86,12 +97,44 @@
     </div>
   </div>
 
+  <!-- Marinara Engine -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#x1F35D;</div>
+      <div>
+        <div class="card-title"><a href="#" onclick="window.open('http://'+location.hostname+':7860');return false;" target="_blank">Marinara Engine &#x2197;</a></div>
+        <div class="card-sub">Port 7860 &mdash; /opt/marinara-engine</div>
+      </div>
+    </div>
+    <button class="btn btn-blue" onclick="runHook('marinara-update','marinara')" id="btn-marinara-update">
+      &#x2B06;&#xFE0F; Pull &amp; Restart
+    </button>
+    <button class="btn btn-green" onclick="runHook('marinara-restart','marinara')" id="btn-marinara-restart">
+      &#x1F504; Restart Container
+    </button>
+    <div class="status-bar" id="status-marinara"></div>
+    <div class="log-out" id="log-marinara"></div>
+    <button class="copy-action-btn" id="copyaction-marinara" onclick="copyActionLog('marinara')" style="display:none">&#x1F4CB; Copy Output</button>
+    <div class="log-panel">
+      <button class="log-panel-toggle" id="logtoggle-marinara" onclick="toggleLogs('marinara','marinara-logs')">
+        <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
+      </button>
+      <div class="log-panel-body" id="logbody-marinara">
+        <div class="log-actions">
+          <button onclick="fetchLogs('marinara','marinara-logs')">&#x1F503; Refresh</button>
+          <button onclick="copyLogs('marinara')" id="copybtn-marinara">&#x1F4CB; Copy</button>
+        </div>
+        <div class="log-stream" id="logstream-marinara">Click Refresh or expand to load logs...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Anime Downloader -->
   <div class="card">
     <div class="card-header">
       <div class="card-icon">&#x1F4FA;</div>
       <div>
-        <div class="card-title">Anime Downloader</div>
+        <div class="card-title"><a href="#" onclick="window.open('http://'+location.hostname+':8001');return false;" target="_blank">Anime Downloader &#x2197;</a></div>
         <div class="card-sub">Port 8001 &mdash; /opt/anime-downloader</div>
       </div>
     </div>
@@ -103,6 +146,7 @@
     </button>
     <div class="status-bar" id="status-anime"></div>
     <div class="log-out" id="log-anime"></div>
+    <button class="copy-action-btn" id="copyaction-anime" onclick="copyActionLog('anime')" style="display:none">&#x1F4CB; Copy Output</button>
     <div class="log-panel">
       <button class="log-panel-toggle" id="logtoggle-anime" onclick="toggleLogs('anime','anime-logs')">
         <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
@@ -115,6 +159,85 @@
         <div class="log-stream" id="logstream-anime">Click Refresh or expand to load logs...</div>
       </div>
     </div>
+  </div>
+
+
+  <!-- Spoolman -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#x1F9F5;</div>
+      <div>
+        <div class="card-title"><a href="#" onclick="window.open('http://'+location.hostname+':7912');return false;" target="_blank">Spoolman &#x2197;</a></div>
+        <div class="card-sub">Port 7912 &mdash; /opt/spoolman</div>
+      </div>
+    </div>
+    <button class="btn btn-blue" onclick="runHook('spoolman-update','spoolman')" id="btn-spoolman-update">
+      &#x2B06;&#xFE0F; Pull &amp; Restart
+    </button>
+    <button class="btn btn-green" onclick="runHook('spoolman-restart','spoolman')" id="btn-spoolman-restart">
+      &#x1F504; Restart Container
+    </button>
+    <div class="status-bar" id="status-spoolman"></div>
+    <div class="log-out" id="log-spoolman"></div>
+    <button class="copy-action-btn" id="copyaction-spoolman" onclick="copyActionLog('spoolman')" style="display:none">&#x1F4CB; Copy Output</button>
+    <div class="log-panel">
+      <button class="log-panel-toggle" id="logtoggle-spoolman" onclick="toggleLogs('spoolman','spoolman-logs')">
+        <span>&#x1F4CB; Server Logs</span><span class="arrow">&#x25B6;</span>
+      </button>
+      <div class="log-panel-body" id="logbody-spoolman">
+        <div class="log-actions">
+          <button onclick="fetchLogs('spoolman','spoolman-logs')">&#x1F503; Refresh</button>
+          <button onclick="copyLogs('spoolman')" id="copybtn-spoolman">&#x1F4CB; Copy</button>
+        </div>
+        <div class="log-stream" id="logstream-spoolman">Click Refresh or expand to load logs...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Claude Code -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#x1F916;</div>
+      <div>
+        <div class="card-title">Claude Code</div>
+        <div class="card-sub">Host CLI &mdash; /root/.npm-global/bin/claude</div>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="runHook('claude-health','claude')" id="btn-claude-health">
+      &#x2705; Health Check
+    </button>
+    <button class="btn btn-blue" onclick="runHook('claude-remote-start','claude')" id="btn-claude-remote-start">
+      &#x1F310; Start Remote Session
+    </button>
+    <button class="btn btn-gray" onclick="runHook('claude-remote-status','claude')" id="btn-claude-remote-status">
+      &#x1F50D; Check Remote Status
+    </button>
+    <button class="btn btn-red" onclick="runHook('claude-remote-stop','claude')" id="btn-claude-remote-stop">
+      &#x23F9;&#xFE0F; Stop Remote Session
+    </button>
+    <div class="status-bar" id="status-claude"></div>
+    <div class="log-out" id="log-claude"></div>
+    <button class="copy-action-btn" id="copyaction-claude" onclick="copyActionLog('claude')" style="display:none">&#x1F4CB; Copy Output</button>
+  </div>
+
+  <!-- Web Terminal (ttyd) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#x2328;&#xFE0F;</div>
+      <div>
+        <div class="card-title"><a href="#" onclick="window.open('http://'+location.hostname+':7681');return false;" target="_blank">Web Terminal &#x2197;</a></div>
+        <div class="card-sub">Port 7681 &mdash; ttyd (login: ofir)</div>
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="runHook('ttyd-status','ttyd')" id="btn-ttyd-status">
+      &#x2705; Health Check
+    </button>
+    <button class="btn btn-blue" onclick="runHook('ttyd-restart','ttyd')" id="btn-ttyd-restart">
+      &#x1F504; Restart Terminal
+    </button>
+    <div class="status-bar" id="status-ttyd"></div>
+    <div class="log-out" id="log-ttyd"></div>
+    <button class="copy-action-btn" id="copyaction-ttyd" onclick="copyActionLog('ttyd')" style="display:none">&#x1F4CB; Copy Output</button>
   </div>
 
 </div>
@@ -132,6 +255,20 @@ function showLog(prefix, text) {
   var el = document.getElementById('log-' + prefix);
   el.style.display = text ? 'block' : 'none';
   el.textContent = text;
+  var btn = document.getElementById('copyaction-' + prefix);
+  if (btn) btn.style.display = text ? 'inline-block' : 'none';
+}
+function copyActionLog(prefix) {
+  var el = document.getElementById('log-' + prefix);
+  var text = el ? el.textContent : '';
+  if (!text.trim()) { return; }
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copyaction-' + prefix);
+    var orig = btn.innerHTML;
+    btn.innerHTML = '&#x2705; Copied!';
+    btn.style.color = '#56d364';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+  });
 }
 async function runHook(hookId, prefix) {
   var btns = allBtns(prefix);
